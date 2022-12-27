@@ -16,8 +16,8 @@ import java.util.function.Function;
 
 @Service
 public class JwtUtil {
-    @Value("${SECRET_KEY}")
-    private String secretKey;
+//    @Value("${app.SECRET_KEY}")
+    private String secretKey="secret";
 
 
     public String extractUsername(String token) throws Exception {

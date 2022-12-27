@@ -1,0 +1,20 @@
+server:
+  port: 8081
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ubi_kvms_user
+    username: postgres
+    password: 12345
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  application:
+    name: USER-SERVICE
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+
+  config:
+    import: optional:configserver:http://localhost:8888
