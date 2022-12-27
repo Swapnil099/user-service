@@ -11,7 +11,9 @@ import com.ubi.userservice.error.CustomException;
 import com.ubi.userservice.error.HttpStatusCode;
 import com.ubi.userservice.error.Result;
 import com.ubi.userservice.mapper.RoleMapper;
+import com.ubi.userservice.repository.PermissionRepository;
 import com.ubi.userservice.repository.RoleRepository;
+import com.ubi.userservice.repository.UserRepository;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,12 @@ public class RoleServiceImpl implements RoleService {
 
     @Autowired
     PermissionService permissionService;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    PermissionRepository permissionRepository;
 
     @Autowired
     Result result;
@@ -78,7 +86,9 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Response<List<RoleDto>> getAllRoles() {
         List<Role> roles = roleRepository.findAll();
+
         List<RoleDto> rolesDtoList = roles.stream().map(roleMapper::toDto).collect(Collectors.toList());
+        for(RoleDto roleDto:rolesDtoList) System.out.println(roleDto.toString());
         Response<List<RoleDto>> response = new Response<>();
         response.setMessage(HttpStatusCode.SUCCESSFUL.getMessage());
         response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());
@@ -102,6 +112,18 @@ public class RoleServiceImpl implements RoleService {
                     result);
         }
 
+        for(User user:role.getUsers()) {
+            role.getUsers().remove(user);
+            user.setRole(null);
+            userRepository.save(user);
+        }
+
+        for(Permission permission:role.getPermissions()){
+            role.getPermissions().remove(permission);
+            permission.getRoles().remove(role);
+            permissionRepository.save(permission);
+        }
+        roleRepository.save(role);
         roleRepository.delete(role);
         response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());
         response.setMessage(HttpStatusCode.SUCCESSFUL.getMessage());

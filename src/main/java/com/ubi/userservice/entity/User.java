@@ -44,7 +44,7 @@ public class User {
 	private Boolean isEnabled;
 
 	@ManyToOne
-	@JoinColumn(name="roleId",referencedColumnName = "id", nullable=false)
+	@JoinColumn(name="roleId",referencedColumnName = "id",nullable=true)
 	private Role role;
 
 	public User(String username, String password,Boolean activeStatus, Role role) {

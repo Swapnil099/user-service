@@ -25,7 +25,7 @@ public class Permission {
     @Column(nullable = false)
     private String type;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.REMOVE},fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.PERSIST},fetch = FetchType.EAGER)
     @JoinTable(
             name = "role_permission",
             joinColumns = { @JoinColumn(name="permission_id",referencedColumnName="id") },
