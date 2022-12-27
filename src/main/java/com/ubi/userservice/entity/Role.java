@@ -29,11 +29,11 @@ public class Role {
 	@Column(nullable = false)
 	private String roleType;
 
-	@OneToMany(mappedBy = "role",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "role",cascade = CascadeType.PERSIST)
 	@JsonIgnore
 	private Set<User> users;
 
-	@ManyToMany(mappedBy = "roles",fetch = FetchType.EAGER)
+	@ManyToMany(mappedBy = "roles",fetch = FetchType.EAGER,cascade = CascadeType.PERSIST)
 	private Set<Permission> permissions = new HashSet<>();
 
     public Role(String roleName, String roleType) {

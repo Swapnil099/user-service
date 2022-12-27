@@ -14,8 +14,10 @@ import java.util.stream.Collectors;
 @Component
 public class RoleMapper {
     public RoleDto toDto(Role role){
-        Set<String> permissions = role.getPermissions().stream().map(permission -> permission.getType()).collect(Collectors.toSet());
-        return new RoleDto(role.getId(),role.getRoleName(),role.getRoleType(),permissions);
+        Set<Permission> permissions = role.getPermissions();
+        System.out.println(role.getPermissions().toString());
+        Set<String> permissionsString = permissions.stream().map(permission -> permission.getType()).collect(Collectors.toSet());
+        return new RoleDto(role.getId(),role.getRoleName(),role.getRoleType(),permissionsString);
     }
 
     public Role toRole(RoleDto roleDTO){
