@@ -13,12 +13,12 @@ import com.ubi.userservice.mapper.UserMapper;
 import com.ubi.userservice.util.JwtUtil;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
 @Data
 public class AuthenticationServiceImpl implements AuthenticationService {
-
 
     @Autowired
     JwtUtil jwtUtil;
@@ -54,11 +54,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public Response<UserPermissionsDto> validateTokenAndGetUser(String jwtToken) {
+    public ResponseEntity<Response<UserPermissionsDto>> validateTokenAndGetUser(String jwtToken) {
         String username = null;
         User user = null;
         Response<UserPermissionsDto> response = new Response<>();
-        if (!jwtToken.isEmpty() && jwtToken.startsWith("Bearer ")) {
+        if (jwtToken != null && jwtToken.startsWith("Bearer ")) {
             jwtToken = jwtToken.substring(7);
             System.out.println(jwtToken);
             try {
@@ -67,20 +67,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     response.setStatusCode(HttpStatusCode.TOKEN_EXPIRED.getCode());
                     response.setMessage(HttpStatusCode.TOKEN_EXPIRED.getMessage());
                     response.setResult(new Result<>(null));
-                    return response;
+                    return ResponseEntity.badRequest().body(response);
                 }
             } catch (Exception e) {
                 response.setStatusCode(HttpStatusCode.UNAUTHORIZED_EXCEPTION.getCode());
                 response.setMessage(HttpStatusCode.UNAUTHORIZED_EXCEPTION.getMessage());
                 response.setResult(new Result<>(null));
-                return response;
+                return ResponseEntity.badRequest().body(response);
             }
         }
         else{
             response.setStatusCode(HttpStatusCode.TOKEN_FORMAT_INVALID.getCode());
             response.setMessage(HttpStatusCode.TOKEN_FORMAT_INVALID.getMessage());
             response.setResult(new Result<>(null));
-            return response;
+            return ResponseEntity.badRequest().body(response);
         }
 
         user = userService.getUserEntityByUsername(username);
@@ -89,6 +89,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());
         response.setMessage(HttpStatusCode.SUCCESSFUL.getMessage());
         response.setResult(new Result<>(userPermissionsDto));
-        return response;
+        return ResponseEntity.ok().body(response);
     }
 }

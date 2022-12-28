@@ -28,8 +28,8 @@ public class AuthenticateController {
 
     @PostMapping("/validate")
     public ResponseEntity<Response<UserPermissionsDto>> validateTokenAndGetUser(@RequestBody ValidateJwt validateJwt) {
-        Response<UserPermissionsDto> userPermissionDto = authenticationService.validateTokenAndGetUser(validateJwt.getJwtToken());
-        return ResponseEntity.ok().body(userPermissionDto);
+        ResponseEntity<Response<UserPermissionsDto>> userPermissionDto = authenticationService.validateTokenAndGetUser(validateJwt.getJwtToken());
+        return userPermissionDto;
     }
 
 }
