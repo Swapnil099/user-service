@@ -151,6 +151,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.getReferenceById(Long.parseLong(userId));
         user.setIsEnabled(true);
         User updatedUser = userRepository.save(user);
+
         return new Response<>(new Result<>(userMapper.toDto(updatedUser)));
     }
 

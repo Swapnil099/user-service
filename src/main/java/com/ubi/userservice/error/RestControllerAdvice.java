@@ -1,5 +1,6 @@
 package com.ubi.userservice.error;
 
+import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class RestControllerAdvice {
 	private final Logger log = LoggerFactory.getLogger(RestControllerAdvice.class);
 	
-	@ExceptionHandler(CustomException.class)
+	@ExceptionHandler({CustomException.class})
 	public ResponseEntity<Object> handleGenericException(CustomException exception) {
 
 		log.info("Custom exception Occured" + exception.getExceptionMessage());

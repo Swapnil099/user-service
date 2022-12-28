@@ -1,10 +1,11 @@
 server:
   port: 8081
+
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/ubi_kvms_user
+    url: jdbc:postgresql://localhost:5432/ubi-user-service
     username: postgres
-    password: 12345
+    password: root
 
   jpa:
     hibernate:
