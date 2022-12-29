@@ -85,7 +85,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         user = userService.getUserEntityByUsername(username);
         UserPermissionsDto userPermissionsDto = userMapper.userPermissionsDto(user);
-
+        userPermissionsDto.setJwtToken(jwtToken);
         response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());
         response.setMessage(HttpStatusCode.SUCCESSFUL.getMessage());
         response.setResult(new Result<>(userPermissionsDto));
