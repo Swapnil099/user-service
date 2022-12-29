@@ -48,7 +48,7 @@ public class UserMapper {
             permissions.add(permission.getType());
         }
 
-        return new UserPermissionsDto(user.getId(),user.getUsername(),user.getIsEnabled(),roleType,permissions);
+        return new UserPermissionsDto(user.getId(),user.getUsername(),user.getIsEnabled(),roleType,null,permissions);
     }
 
     public UserCreatedDto toUserCreatedDto(User user){
