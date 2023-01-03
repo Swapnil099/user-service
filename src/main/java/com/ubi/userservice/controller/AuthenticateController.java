@@ -28,6 +28,7 @@ public class AuthenticateController {
 
     @PostMapping("/validate")
     public ResponseEntity<Response<UserPermissionsDto>> validateTokenAndGetUser(@RequestBody ValidateJwt validateJwt) {
+        System.out.println("request recieved");
         ResponseEntity<Response<UserPermissionsDto>> userPermissionDto = authenticationService.validateTokenAndGetUser(validateJwt.getJwtToken());
         return userPermissionDto;
     }

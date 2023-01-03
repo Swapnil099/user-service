@@ -1,5 +1,6 @@
 package com.ubi.userservice.util;
 
+import com.ubi.userservice.dto.contactInfo.ContactInfoDto;
 import com.ubi.userservice.dto.role.RoleCreationDto;
 import com.ubi.userservice.dto.user.UserDto;
 import com.ubi.userservice.entity.Permission;
@@ -56,11 +57,11 @@ public class DataLoaderUtil implements ApplicationRunner {
         Role rolePrincipal = roleService.getRoleByRoleType("ROLE_PRINCIPAL");
         Role roleTeacher = roleService.getRoleByRoleType("ROLE_TEACHER");
 
-        User superAdminUser = new User("superadmin",passwordEncoder.encode("superadmin"),true,roleSuperAdmin);
-        User hqAdminUser = new User("hqadmin",passwordEncoder.encode("hqadmin"),true,roleEducationHQAdmin);
-        User rgAdminUser = new User("rgadmin",passwordEncoder.encode("rgadmin"),true,roleRegionalAdmin);
-        User principalUser = new User("principal",passwordEncoder.encode("principal"),true,rolePrincipal);
-        User teacherUser = new User("teacher",passwordEncoder.encode("teacher"),true,roleTeacher);
+        User superAdminUser = new User("superadmin",passwordEncoder.encode("superadmin"),true,roleSuperAdmin,null);
+        User hqAdminUser = new User("hqadmin",passwordEncoder.encode("hqadmin"),true,roleEducationHQAdmin,null);
+        User rgAdminUser = new User("rgadmin",passwordEncoder.encode("rgadmin"),true,roleRegionalAdmin,null);
+        User principalUser = new User("principal",passwordEncoder.encode("principal"),true,rolePrincipal,null);
+        User teacherUser = new User("teacher",passwordEncoder.encode("teacher"),true,roleTeacher,null);
 
 
         userRepository.save(superAdminUser);

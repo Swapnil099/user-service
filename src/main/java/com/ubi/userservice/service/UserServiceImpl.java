@@ -5,12 +5,15 @@ import com.ubi.userservice.dto.response.Response;
 import com.ubi.userservice.dto.user.UserCreatedDto;
 import com.ubi.userservice.dto.user.UserCreationDto;
 import com.ubi.userservice.dto.user.UserDto;
+import com.ubi.userservice.entity.ContactInfo;
 import com.ubi.userservice.entity.Role;
 import com.ubi.userservice.entity.User;
 import com.ubi.userservice.error.CustomException;
 import com.ubi.userservice.error.HttpStatusCode;
 import com.ubi.userservice.error.Result;
+import com.ubi.userservice.mapper.ContactInfoMapper;
 import com.ubi.userservice.mapper.UserMapper;
+import com.ubi.userservice.repository.ContactInfoRepository;
 import com.ubi.userservice.repository.UserRepository;
 import com.ubi.userservice.util.PermissionUtil;
 import lombok.Data;
@@ -33,6 +36,9 @@ public class UserServiceImpl implements UserService {
     private RoleService roleService;
 
     @Autowired
+    private ContactInfoService contactInfoService;
+
+    @Autowired
     private UserMapper userMapper;
 
     @Autowired
@@ -43,6 +49,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     PermissionUtil permissionUtil;
+
+    @Autowired
+    ContactInfoMapper contactInfoMapper;
 
     @Override
     public Response<List<UserDto>> getAllUsers() {
@@ -62,14 +71,17 @@ public class UserServiceImpl implements UserService {
         Response<UserCreatedDto> response = new Response<>();
         if(this.getUserByUsername(userCreationDTO.getUsername()) != null){
             throw new CustomException(
-                    HttpStatusCode.RESOURCE_ALREADY_EXISTS.getCode(),
-                    HttpStatusCode.RESOURCE_ALREADY_EXISTS,
-                    HttpStatusCode.RESOURCE_ALREADY_EXISTS.getMessage(),
-                    result);
+                    HttpStatusCode.USERNAME_NOT_AVAILAIBLE.getCode(),
+                    HttpStatusCode.USERNAME_NOT_AVAILAIBLE,
+                    HttpStatusCode.USERNAME_NOT_AVAILAIBLE.getMessage(),
+                    new Result<>());
         }
 
         User user = userMapper.toUser(userCreationDTO);
-        User userWithoutEncodedPassword = new User(user.getUsername(),user.getPassword(),user.getIsEnabled(),user.getRole());
+        ContactInfo contactInfo = contactInfoService.createContactInfo(userCreationDTO.getContactInfoDto());
+        user.setContactInfo(contactInfo);
+
+        User userWithoutEncodedPassword = new User(user.getUsername(),user.getPassword(),user.getIsEnabled(),user.getRole(),user.getContactInfo());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         userWithoutEncodedPassword.setId(user.getId());
@@ -225,6 +237,10 @@ public class UserServiceImpl implements UserService {
                     result);
         }
         user.setRole(role);
+
+        ContactInfo contactInfo = contactInfoService.updateContactInfo(userCreationDto.getContactInfoDto(),user.getContactInfo().getId());
+        user.setContactInfo(contactInfo);
+
         userRepository.save(user);
 
         Response response = new Response<>();
