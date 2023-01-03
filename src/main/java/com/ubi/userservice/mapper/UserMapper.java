@@ -1,5 +1,7 @@
 package com.ubi.userservice.mapper;
 
+import com.netflix.discovery.converters.Auto;
+import com.ubi.userservice.dto.contactInfo.ContactInfoDto;
 import com.ubi.userservice.dto.role.RoleDto;
 import com.ubi.userservice.dto.user.UserCreatedDto;
 import com.ubi.userservice.dto.user.UserCreationDto;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
+
 @Service
 public class UserMapper {
 
@@ -22,12 +25,17 @@ public class UserMapper {
     RoleService roleService;
 
     @Autowired
+    ContactInfoMapper contactInfoMapper;
+
+    @Autowired
     AutogeneratePassword autogeneratePassword;
 
     public UserDto toDto(User user){
         String roleType = null;
         if(user.getRole() != null)  roleType = user.getRole().getRoleType();
-        return new UserDto(user.getId(),user.getUsername(),user.getIsEnabled(),roleType);
+        ContactInfoDto contactInfoDto = null;
+        if(user.getContactInfo() != null) contactInfoDto = contactInfoMapper.toContactInfoDto(user.getContactInfo());
+        return new UserDto(user.getId(),user.getUsername(),user.getIsEnabled(),roleType,contactInfoDto);
     }
 
     public User toUser(UserCreationDto userCreationDTO) {
@@ -36,7 +44,7 @@ public class UserMapper {
                 userCreationDTO.getUsername(),
                 autogeneratePassword.generate(),
                 userCreationDTO.getIsActivate(),
-                role
+                role,null
         );
     }
 
@@ -52,7 +60,10 @@ public class UserMapper {
     }
 
     public UserCreatedDto toUserCreatedDto(User user){
-        UserCreatedDto userCreatedDto = new UserCreatedDto(user.getId(),user.getUsername(),user.getPassword(),user.getIsEnabled(),user.getRole().getRoleName());
+        UserCreatedDto userCreatedDto = new UserCreatedDto(user.getId(),user.getUsername(),user.getPassword(),user.getIsEnabled(),user.getRole().getRoleName(),null);
+        ContactInfoDto contactInfoDto = null;
+        if(user.getContactInfo() != null) contactInfoDto = contactInfoMapper.toContactInfoDto(user.getContactInfo());
+        userCreatedDto.setContactInfoDto(contactInfoDto);
         return userCreatedDto;
     }
 }

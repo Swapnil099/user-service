@@ -1,12 +1,7 @@
 package com.ubi.userservice.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,10 +30,15 @@ public class User {
 	@JoinColumn(name="roleId",referencedColumnName = "id",nullable=true)
 	private Role role;
 
-	public User(String username, String password,Boolean activeStatus, Role role) {
+	@OneToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name = "contactId", referencedColumnName = "id")
+	private ContactInfo contactInfo;
+
+	public User(String username, String password,Boolean activeStatus, Role role,ContactInfo contactInfo) {
 		this.username = username;
 		this.password = password;
 		this.isEnabled = activeStatus;
 		this.role = role;
+		this.contactInfo = contactInfo;
 	}
 }
