@@ -81,4 +81,11 @@ public class UserController {
         Response<UserDto> response = userService.updateUserById(userId, userCreationDto);
         return ResponseEntity.ok().body(response);
     }
+
+    @Operation(summary = "Check if user exists", security = @SecurityRequirement(name = "bearerAuth"))
+    @PatchMapping ("/{roleType}/{userId}")
+    public ResponseEntity<Response<Boolean>> updateUserById(@PathVariable String roleType,@PathVariable String userId) {
+        Response<Boolean> response = userService.isUserExistsWithGivenRole(roleType, userId);
+        return ResponseEntity.ok().body(response);
+    }
 }

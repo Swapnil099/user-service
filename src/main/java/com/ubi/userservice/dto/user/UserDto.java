@@ -1,6 +1,7 @@
 package com.ubi.userservice.dto.user;
 
 import com.ubi.userservice.dto.contactInfo.ContactInfoDto;
+import com.ubi.userservice.dto.role.RoleDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -11,5 +12,6 @@ public class UserDto {
     private String username;
     private Boolean isActivate;
     private String roleType;
+    private RoleDto roleDto;
     private ContactInfoDto contactInfoDto;
 }
