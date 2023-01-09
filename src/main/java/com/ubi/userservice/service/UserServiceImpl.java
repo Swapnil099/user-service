@@ -250,4 +250,28 @@ public class UserServiceImpl implements UserService {
         return response;
     }
 
+    @Override
+    public Response<Boolean> isUserExistsWithGivenRole(String roleType, String userId) {
+        Optional<User> currUser = userRepository.findById(Long.parseLong(userId));
+        if(!currUser.isPresent()){
+            throw new CustomException(HttpStatusCode.RESOURCE_NOT_FOUND.getCode(),
+                    HttpStatusCode.RESOURCE_NOT_FOUND,
+                    HttpStatusCode.RESOURCE_NOT_FOUND.getMessage(),
+                    result);
+        }
+        User user = currUser.get();
+        if(user.getRole() == null || !user.getRole().getRoleType().equals(roleType)){
+            throw new CustomException(HttpStatusCode.USER_NOT_EXISTS.getCode(),
+                    HttpStatusCode.USER_NOT_EXISTS,
+                    HttpStatusCode.USER_NOT_EXISTS.getMessage(),
+                    result);
+        }
+        Boolean isExists = true;
+        Response response = new Response<>();
+        response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());
+        response.setMessage(HttpStatusCode.SUCCESSFUL.getMessage());
+        response.setResult(new Result<>(isExists));
+        return response;
+    }
+
 }

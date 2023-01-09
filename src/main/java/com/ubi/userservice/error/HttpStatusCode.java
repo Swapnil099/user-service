@@ -55,6 +55,7 @@ public enum HttpStatusCode {
     ROLE_NOT_EXISTS(110, "Given Role Type Not Exist"),
     USERNAME_NOT_AVAILAIBLE(110, "Username Not Availaible"),
     ROLETYPE_NOT_AVAILAIBLE(110, "Role Type Not Availaible"),
+    USER_NOT_EXISTS(110, "User with given roleType not exist"),
     INVALID_COLUMN_NAME(111, "Invalid column name provided"),
 
     WRONG_DATA_TYPE(112, "Wrong datatype selected for non multivalued field"),

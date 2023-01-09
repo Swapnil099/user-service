@@ -28,14 +28,23 @@ public class UserMapper {
     ContactInfoMapper contactInfoMapper;
 
     @Autowired
+    RoleMapper roleMapper;
+
+    @Autowired
     AutogeneratePassword autogeneratePassword;
 
     public UserDto toDto(User user){
         String roleType = null;
-        if(user.getRole() != null)  roleType = user.getRole().getRoleType();
+        RoleDto roleDto = null;
+        if(user.getRole() != null)  {
+            roleType = user.getRole().getRoleType();
+            roleDto = roleMapper.toDto(roleService.getRoleFromString(roleType));
+
+        }
         ContactInfoDto contactInfoDto = null;
         if(user.getContactInfo() != null) contactInfoDto = contactInfoMapper.toContactInfoDto(user.getContactInfo());
-        return new UserDto(user.getId(),user.getUsername(),user.getIsEnabled(),roleType,contactInfoDto);
+
+        return new UserDto(user.getId(),user.getUsername(),user.getIsEnabled(),roleType,roleDto,contactInfoDto);
     }
 
     public User toUser(UserCreationDto userCreationDTO) {
@@ -55,7 +64,6 @@ public class UserMapper {
         for(Permission permission:user.getRole().getPermissions()){
             permissions.add(permission.getType());
         }
-
         return new UserPermissionsDto(user.getId(),user.getUsername(),user.getIsEnabled(),roleType,null,permissions);
     }
 
