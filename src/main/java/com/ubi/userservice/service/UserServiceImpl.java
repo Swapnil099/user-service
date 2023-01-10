@@ -253,20 +253,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public Response<Boolean> isUserExistsWithGivenRole(String roleType, String userId) {
         Optional<User> currUser = userRepository.findById(Long.parseLong(userId));
+        Boolean isExists = false;
         if(!currUser.isPresent()){
-            throw new CustomException(HttpStatusCode.RESOURCE_NOT_FOUND.getCode(),
-                    HttpStatusCode.RESOURCE_NOT_FOUND,
-                    HttpStatusCode.RESOURCE_NOT_FOUND.getMessage(),
-                    result);
+            Response response = new Response<>();
+            response.setStatusCode(HttpStatusCode.USER_NOT_EXISTS.getCode());
+            response.setMessage(HttpStatusCode.USER_NOT_EXISTS.getMessage());
+            response.setResult(new Result<>(isExists));
+            return response;
         }
         User user = currUser.get();
         if(user.getRole() == null || !user.getRole().getRoleType().equals(roleType)){
-            throw new CustomException(HttpStatusCode.USER_NOT_EXISTS.getCode(),
-                    HttpStatusCode.USER_NOT_EXISTS,
-                    HttpStatusCode.USER_NOT_EXISTS.getMessage(),
-                    result);
+            Response response = new Response<>();
+            response.setStatusCode(HttpStatusCode.USER_NOT_EXISTS.getCode());
+            response.setMessage(HttpStatusCode.USER_NOT_EXISTS.getMessage());
+            response.setResult(new Result<>(isExists));
+            return response;
         }
-        Boolean isExists = true;
+
+        isExists = true;
         Response response = new Response<>();
         response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());
         response.setMessage(HttpStatusCode.SUCCESSFUL.getMessage());
