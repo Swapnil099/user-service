@@ -30,7 +30,7 @@ public class User {
 	@JoinColumn(name="roleId",referencedColumnName = "id",nullable=true)
 	private Role role;
 
-	@OneToOne(cascade=CascadeType.ALL)
+	@OneToOne(cascade=CascadeType.MERGE)
 	@JoinColumn(name = "contactId", referencedColumnName = "id")
 	private ContactInfo contactInfo;
 

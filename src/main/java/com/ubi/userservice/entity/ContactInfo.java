@@ -3,21 +3,20 @@ package com.ubi.userservice.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 
-@Data
-@AllArgsConstructor
+@Getter @Setter @ToString @EqualsAndHashCode
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@Table(name = "ContactInfo ")
+@Table(name = "ContactInfo")
+@Builder
 public class ContactInfo {
 
     @Id
@@ -47,7 +46,7 @@ public class ContactInfo {
     private String aadharCardNumber;
     private String nationality;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "contactInfo", fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.MERGE, mappedBy = "contactInfo", fetch = FetchType.LAZY)
     @JsonIgnore
     private User user;
 

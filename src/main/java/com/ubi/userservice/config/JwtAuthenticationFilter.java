@@ -10,6 +10,7 @@ import com.ubi.userservice.mapper.UserMapper;
 import com.ubi.userservice.service.UserService;
 import com.ubi.userservice.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,6 +46,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ") && !request.getRequestURI().equals("/authenticate")) {
 
             jwtToken = requestTokenHeader.substring(7);
+            try{
+                jwtUtil.isTokenExpired(jwtToken);
+            }
+            catch (Exception e){
+                throw new CustomException(
+                        HttpStatusCode.TOKEN_EXPIRED.getCode(),
+                        HttpStatusCode.TOKEN_EXPIRED,
+                        HttpStatusCode.TOKEN_EXPIRED.getMessage(),
+                        new Result<>());
+            }
             try {
                 username = jwtUtil.extractUsername(jwtToken);
             } catch (Exception e) {

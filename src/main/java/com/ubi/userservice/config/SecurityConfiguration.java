@@ -49,6 +49,7 @@ public class SecurityConfiguration {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeHttpRequests().antMatchers(HttpMethod.POST,"/authenticate").permitAll()
                 .and().authorizeHttpRequests().antMatchers(HttpMethod.POST,"/validate").permitAll()
+                .and().authorizeHttpRequests().antMatchers(HttpMethod.POST,"/refresh").permitAll()
                 .and().authorizeHttpRequests().antMatchers(HttpMethod.GET,PUBLIC_URLS).permitAll()
                 .and().authorizeHttpRequests().anyRequest().authenticated();
 

@@ -2,6 +2,7 @@ package com.ubi.userservice.service;
 
 import com.ubi.userservice.dto.jwt.JwtResponse;
 import com.ubi.userservice.dto.jwt.LoginCredentialDto;
+import com.ubi.userservice.dto.jwt.ValidateRefreshJwt;
 import com.ubi.userservice.dto.response.Response;
 import com.ubi.userservice.dto.user.UserDto;
 import com.ubi.userservice.dto.user.UserPermissionsDto;
@@ -43,13 +44,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         User user = userService.getUserEntityByUsername(username);
-        String roleName = userService.getRoleByUsername(username);
         UserDto userDto = userService.getUserByUsername(username);
         String token = jwtUtil.generateToken(user);
+        String refreshToken = jwtUtil.generateRefreshToken(user);
+        String roleName = user.getRole().getRoleName();
+        JwtResponse jwtResponse = JwtResponse.builder().id(userDto.getId()).username(user.getUsername())
+                .firstName(user.getContactInfo().getFirstName()).lastName(user.getContactInfo().getLastName())
+                .accessToken(token).refreshToken(refreshToken).roleName(roleName).build();
 
         response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());
         response.setMessage(HttpStatusCode.SUCCESSFUL.getMessage());
-        response.setResult(new Result<>(new JwtResponse(userDto.getId(),token,roleName)));
+        response.setResult(new Result<>(jwtResponse));
         return response;
     }
 
@@ -90,5 +95,44 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         response.setMessage(HttpStatusCode.SUCCESSFUL.getMessage());
         response.setResult(new Result<>(userPermissionsDto));
         return ResponseEntity.ok().body(response);
+    }
+
+    @Override
+    public Response<JwtResponse> refreshUserAccessToken(String refreshToken) {
+        String username = null;
+        Response<JwtResponse> response = new Response<>();
+
+        try {
+            jwtUtil.isTokenExpired(refreshToken);
+        }
+        catch (Exception e){
+            throw new CustomException(
+                    HttpStatusCode.REFRESH_TOKEN_EXPIRED.getCode(),
+                    HttpStatusCode.REFRESH_TOKEN_EXPIRED,
+                    HttpStatusCode.REFRESH_TOKEN_EXPIRED.getMessage(),
+                    new Result<>());
+        }
+
+        try {
+            username = jwtUtil.extractUsername(refreshToken);
+        } catch (Exception e) {
+            throw new CustomException(
+                    HttpStatusCode.UNAUTHORIZED_EXCEPTION.getCode(),
+                    HttpStatusCode.UNAUTHORIZED_EXCEPTION,
+                    HttpStatusCode.UNAUTHORIZED_EXCEPTION.getMessage(),
+                    new Result<>());
+        }
+
+        String roleName = userService.getRoleByUsername(username);
+        UserDto userDto = userService.getUserByUsername(username);
+        User user = userService.getUserEntityByUsername(username);
+        String accessToken  = jwtUtil.generateToken(user);
+        JwtResponse jwtResponse = JwtResponse.builder().id(userDto.getId()).username(user.getUsername())
+                        .firstName(user.getContactInfo().getFirstName()).lastName(user.getContactInfo().getLastName())
+                        .accessToken(accessToken).refreshToken(refreshToken).roleName(roleName).build();
+        response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());
+        response.setMessage(HttpStatusCode.SUCCESSFUL.getMessage());
+        response.setResult(new Result<>(jwtResponse));
+        return response;
     }
 }
