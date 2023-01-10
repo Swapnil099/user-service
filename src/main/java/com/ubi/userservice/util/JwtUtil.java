@@ -45,9 +45,20 @@ public class JwtUtil {
         return createToken(claims, user.getUsername());
     }
 
+    public String generateRefreshToken(User user) {
+        Map<String, Object> claims = getAllClaims(user);
+        return createRefreshToken(claims, user.getUsername());
+    }
+
     private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 1))
+                .signWith(SignatureAlgorithm.HS256, secretKey).compact();
+    }
+
+    private String createRefreshToken(Map<String, Object> claims, String subject) {
+        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(SignatureAlgorithm.HS256, secretKey).compact();
     }
 

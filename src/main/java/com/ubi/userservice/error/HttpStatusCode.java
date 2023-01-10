@@ -80,6 +80,7 @@ public enum HttpStatusCode {
 
     UNAUTHORIZED_EXCEPTION(401, "Unauthorized To Perform Request"),
     TOKEN_EXPIRED(401, "Token Is Expired"),
+    REFRESH_TOKEN_EXPIRED(401, "Refresh Token Is Expired"),
     TOKEN_FORMAT_INVALID(401, "Token Format Is Invalid"),
     INVALID_TOKEN(401, "Token Is Invalid"),
     TOKEN_NOT_FOUND(401, "Token Not Found"),

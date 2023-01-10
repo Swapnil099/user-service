@@ -3,6 +3,7 @@ package com.ubi.userservice.controller;
 import com.ubi.userservice.dto.jwt.JwtResponse;
 import com.ubi.userservice.dto.jwt.LoginCredentialDto;
 import com.ubi.userservice.dto.jwt.ValidateJwt;
+import com.ubi.userservice.dto.jwt.ValidateRefreshJwt;
 import com.ubi.userservice.dto.response.Response;
 import com.ubi.userservice.dto.user.UserPermissionsDto;
 import com.ubi.userservice.service.AuthenticationService;
@@ -26,11 +27,18 @@ public class AuthenticateController {
         return ResponseEntity.ok().body(jwtTokenResponse);
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<Response<JwtResponse>> getRefreshToken(@RequestBody ValidateRefreshJwt validateRefreshJwt) {
+        Response<JwtResponse> jwtTokenResponse = authenticationService.refreshUserAccessToken(validateRefreshJwt.getRefreshToken());
+        return ResponseEntity.ok().body(jwtTokenResponse);
+    }
+
     @PostMapping("/validate")
     public ResponseEntity<Response<UserPermissionsDto>> validateTokenAndGetUser(@RequestBody ValidateJwt validateJwt) {
         System.out.println("request recieved");
         ResponseEntity<Response<UserPermissionsDto>> userPermissionDto = authenticationService.validateTokenAndGetUser(validateJwt.getJwtToken());
         return userPermissionDto;
     }
+
 
 }

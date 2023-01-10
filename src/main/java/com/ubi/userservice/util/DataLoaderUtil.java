@@ -3,13 +3,16 @@ package com.ubi.userservice.util;
 import com.ubi.userservice.dto.contactInfo.ContactInfoDto;
 import com.ubi.userservice.dto.role.RoleCreationDto;
 import com.ubi.userservice.dto.user.UserDto;
+import com.ubi.userservice.entity.ContactInfo;
 import com.ubi.userservice.entity.Permission;
 import com.ubi.userservice.entity.Role;
 import com.ubi.userservice.entity.User;
+import com.ubi.userservice.repository.ContactInfoRepository;
 import com.ubi.userservice.repository.UserRepository;
 import com.ubi.userservice.service.PermissionService;
 import com.ubi.userservice.service.RoleService;
 import com.ubi.userservice.service.UserService;
+import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -31,6 +34,9 @@ public class DataLoaderUtil implements ApplicationRunner {
     private UserRepository userRepository;
 
     @Autowired
+    private ContactInfoRepository contactInfoRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -50,6 +56,9 @@ public class DataLoaderUtil implements ApplicationRunner {
     }
 
     private void loadUserInDatabase() {
+
+        LocalDate DOB = LocalDate.of(1999,12,15);
+
         // adding super admin
         Role roleSuperAdmin = roleService.getRoleByRoleType("ROLE_SUPER_ADMIN");
         Role roleEducationHQAdmin = roleService.getRoleByRoleType("ROLE_EDUCATIONAL_INSTITUTE_HQ_ADMIN");
@@ -63,6 +72,55 @@ public class DataLoaderUtil implements ApplicationRunner {
         User principalUser = new User("principal",passwordEncoder.encode("principal"),true,rolePrincipal,null);
         User teacherUser = new User("teacher",passwordEncoder.encode("teacher"),true,roleTeacher,null);
 
+        userRepository.save(superAdminUser);
+        userRepository.save(hqAdminUser);
+        userRepository.save(rgAdminUser);
+        userRepository.save(principalUser);
+        userRepository.save(teacherUser);
+
+        ContactInfo superAdminContact = ContactInfo.builder().firstName("super").middleName("middlename")
+                .lastName("admin").email("superadmin@ubi.com")
+                .aadharCardNumber("24234432123").city("Pune").state("Maharashtra")
+                .address("new peth pune").age(32).dob(DOB).bloodGroup("A+")
+                .contactNumber("123445342345").nationality("Indian").gender("Male").user(superAdminUser).build();
+        System.out.println("------------- " + superAdminContact);
+        superAdminContact = contactInfoRepository.save(superAdminContact);
+
+        ContactInfo eduAdminContact = ContactInfo.builder().firstName("Education").middleName("middlename")
+                .lastName("admin").email("educationAdmin@ubi.com")
+                .aadharCardNumber("24234432123").city("Pune").state("Maharashtra")
+                .address("new peth pune").age(32).dob(DOB).bloodGroup("A+")
+                .contactNumber("123445342345").nationality("Indian").gender("Male").user(hqAdminUser).build();
+        eduAdminContact = contactInfoRepository.save(eduAdminContact);
+
+        ContactInfo regionAdminContact = ContactInfo.builder().firstName("region").middleName("middlename")
+                .lastName("admin").email("regionAdmin@ubi.com")
+                .aadharCardNumber("24234432123").city("Pune").state("Maharashtra")
+                .address("new peth pune").age(32).dob(DOB).bloodGroup("A+")
+                .contactNumber("123445342345").nationality("Indian").gender("Male").user(rgAdminUser).build();
+        regionAdminContact = contactInfoRepository.save(regionAdminContact);
+
+
+        ContactInfo principalContact = ContactInfo.builder().firstName("principal").middleName("middlename")
+                .lastName("admin").email("principalAdmin@ubi.com")
+                .aadharCardNumber("24234432123").city("Pune").state("Maharashtra")
+                .address("new peth pune").age(32).dob(DOB).bloodGroup("A+")
+                .contactNumber("123445342345").nationality("Indian").gender("Male").user(principalUser).build();
+        principalContact = contactInfoRepository.save(principalContact);
+
+
+        ContactInfo teacherContact = ContactInfo.builder().firstName("teacher").middleName("middlename")
+                .lastName("admin").email("teacheradmin@ubi.com")
+                .aadharCardNumber("24234432123").city("Pune").state("Maharashtra")
+                .address("new peth pune").age(32).dob(DOB).bloodGroup("A+")
+                .contactNumber("123445342345").nationality("Indian").gender("Male").user(teacherUser).build();
+        teacherContact = contactInfoRepository.save(teacherContact);
+
+        superAdminUser.setContactInfo(superAdminContact);
+        hqAdminUser.setContactInfo(eduAdminContact);
+        rgAdminUser.setContactInfo(regionAdminContact);
+        principalUser.setContactInfo(principalContact);
+        teacherUser.setContactInfo(teacherContact);
 
         userRepository.save(superAdminUser);
         userRepository.save(hqAdminUser);
