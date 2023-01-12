@@ -56,6 +56,10 @@ public enum HttpStatusCode {
     USERNAME_NOT_AVAILAIBLE(110, "Username Not Availaible"),
     ROLETYPE_NOT_AVAILAIBLE(110, "Role Type Not Availaible"),
     USER_NOT_EXISTS(110, "User with given roleType not exist"),
+    PRINCIPAL_NOT_EXISTS(110, "Principal With Given ID Not Exist"),
+    TEACHER_NOT_EXISTS(110, "Teacher With Given ID Not Exist"),
+
+
     INVALID_COLUMN_NAME(111, "Invalid column name provided"),
 
     WRONG_DATA_TYPE(112, "Wrong datatype selected for non multivalued field"),
@@ -78,14 +82,14 @@ public enum HttpStatusCode {
 
     OPERATION_NOT_ALLOWED(405, "Operation is Not Allowed"),
 
-    UNAUTHORIZED_EXCEPTION(401, "Unauthorized To Perform Request"),
+    UNAUTHORIZED_EXCEPTION(400, "Unauthorized To Perform Request"),
     TOKEN_EXPIRED(401, "Token Is Expired"),
-    REFRESH_TOKEN_EXPIRED(401, "Refresh Token Is Expired"),
-    TOKEN_FORMAT_INVALID(401, "Token Format Is Invalid"),
-    INVALID_TOKEN(401, "Token Is Invalid"),
-    TOKEN_NOT_FOUND(401, "Token Not Found"),
+    REFRESH_TOKEN_EXPIRED(402, "Refresh Token Is Expired"),
+    TOKEN_FORMAT_INVALID(403, "Token Format Is Invalid"),
+    INVALID_TOKEN(404, "Token Is Invalid"),
+    TOKEN_NOT_FOUND(405, "Token Not Found"),
 
-    PERMISSION_DENIED(401, "User Dont Have Permission To Perform This Reqeust"),
+    PERMISSION_DENIED(406, "User Dont Have Permission To Perform This Reqeust"),
 
     FORBIDDEN_EXCEPTION(403, "Forbidden access attempted"),
 

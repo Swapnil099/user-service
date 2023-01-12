@@ -17,6 +17,10 @@ public interface UserService {
 
     Response<UserDto> getUserById(String userId);
 
+    Response<UserDto> getPrincipalById(String principalId);
+
+    Response<UserDto> getTeacherById(String teacherId);
+
      UserDto getUserByUsername(String username);
 
      User getUserEntityByUsername(String username);

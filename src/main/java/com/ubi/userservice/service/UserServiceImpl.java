@@ -111,6 +111,56 @@ public class UserServiceImpl implements UserService {
         return response;
     }
 
+    @Override
+    public Response<UserDto> getPrincipalById(String principalId) {
+        Optional<User> currUser = userRepository.findById(Long.parseLong(principalId));
+        Response<UserDto> response = new Response<>();
+        if(!currUser.isPresent()) {
+            throw new CustomException(HttpStatusCode.PRINCIPAL_NOT_EXISTS.getCode(),
+                    HttpStatusCode.PRINCIPAL_NOT_EXISTS,
+                    HttpStatusCode.PRINCIPAL_NOT_EXISTS.getMessage(),
+                    result);
+        }
+
+        if(!currUser.get().getRole().getRoleType().equals("ROLE_PRINCIPAL")){
+            throw new CustomException(HttpStatusCode.PRINCIPAL_NOT_EXISTS.getCode(),
+                    HttpStatusCode.PRINCIPAL_NOT_EXISTS,
+                    HttpStatusCode.PRINCIPAL_NOT_EXISTS.getMessage(),
+                    result);
+        }
+        User user = currUser.get();
+        UserDto userDto = userMapper.toDto(user);
+        response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());
+        response.setMessage(HttpStatusCode.SUCCESSFUL.getMessage());
+        response.setResult(new Result<>(userDto));
+        return response;
+    }
+
+    @Override
+    public Response<UserDto> getTeacherById(String teacherId) {
+        Optional<User> currUser = userRepository.findById(Long.parseLong(teacherId));
+        Response<UserDto> response = new Response<>();
+        if(!currUser.isPresent()) {
+            throw new CustomException(HttpStatusCode.TEACHER_NOT_EXISTS.getCode(),
+                    HttpStatusCode.TEACHER_NOT_EXISTS,
+                    HttpStatusCode.TEACHER_NOT_EXISTS.getMessage(),
+                    result);
+        }
+
+        if(!currUser.get().getRole().getRoleType().equals("ROLE_TEACHER")){
+            throw new CustomException(HttpStatusCode.TEACHER_NOT_EXISTS.getCode(),
+                    HttpStatusCode.TEACHER_NOT_EXISTS,
+                    HttpStatusCode.TEACHER_NOT_EXISTS.getMessage(),
+                    result);
+        }
+        User user = currUser.get();
+        UserDto userDto = userMapper.toDto(user);
+        response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());
+        response.setMessage(HttpStatusCode.SUCCESSFUL.getMessage());
+        response.setResult(new Result<>(userDto));
+        return response;
+    }
+
     public UserDto getUserByUsername(String username){
         User user = userRepository.findByUsername(username);
         if(user == null) return null;
