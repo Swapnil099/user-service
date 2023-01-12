@@ -161,6 +161,56 @@ public class UserServiceImpl implements UserService {
         return response;
     }
 
+    @Override
+    public Response<UserDto> getRegionAdminById(String regionAdminId) {
+        Optional<User> currUser = userRepository.findById(Long.parseLong(regionAdminId));
+        Response<UserDto> response = new Response<>();
+        if(!currUser.isPresent()) {
+            throw new CustomException(HttpStatusCode.REGION_ADMIN_NOT_EXISTS.getCode(),
+                    HttpStatusCode.REGION_ADMIN_NOT_EXISTS,
+                    HttpStatusCode.REGION_ADMIN_NOT_EXISTS.getMessage(),
+                    result);
+        }
+
+        if(!currUser.get().getRole().getRoleType().equals("ROLE_REGIONAL_OFFICE_ADMIN")){
+            throw new CustomException(HttpStatusCode.REGION_ADMIN_NOT_EXISTS.getCode(),
+                    HttpStatusCode.REGION_ADMIN_NOT_EXISTS,
+                    HttpStatusCode.REGION_ADMIN_NOT_EXISTS.getMessage(),
+                    result);
+        }
+        User user = currUser.get();
+        UserDto userDto = userMapper.toDto(user);
+        response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());
+        response.setMessage(HttpStatusCode.SUCCESSFUL.getMessage());
+        response.setResult(new Result<>(userDto));
+        return response;
+    }
+
+    @Override
+    public Response<UserDto> getInsitituteAdminById(String instituteAdminId) {
+        Optional<User> currUser = userRepository.findById(Long.parseLong(instituteAdminId));
+        Response<UserDto> response = new Response<>();
+        if(!currUser.isPresent()) {
+            throw new CustomException(HttpStatusCode.INSTITUTE_ADMIN_NOT_EXISTS.getCode(),
+                    HttpStatusCode.INSTITUTE_ADMIN_NOT_EXISTS,
+                    HttpStatusCode.INSTITUTE_ADMIN_NOT_EXISTS.getMessage(),
+                    result);
+        }
+
+        if(!currUser.get().getRole().getRoleType().equals("ROLE_EDUCATIONAL_INSTITUTE_HQ_ADMIN")){
+            throw new CustomException(HttpStatusCode.INSTITUTE_ADMIN_NOT_EXISTS.getCode(),
+                    HttpStatusCode.INSTITUTE_ADMIN_NOT_EXISTS,
+                    HttpStatusCode.INSTITUTE_ADMIN_NOT_EXISTS.getMessage(),
+                    result);
+        }
+        User user = currUser.get();
+        UserDto userDto = userMapper.toDto(user);
+        response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());
+        response.setMessage(HttpStatusCode.SUCCESSFUL.getMessage());
+        response.setResult(new Result<>(userDto));
+        return response;
+    }
+
     public UserDto getUserByUsername(String username){
         User user = userRepository.findByUsername(username);
         if(user == null) return null;

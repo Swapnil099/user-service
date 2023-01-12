@@ -54,10 +54,24 @@ public class UserController {
         return ResponseEntity.ok().body(response);
     }
 
-    @Operation(summary = "Get Principal Details By Id", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Get Teacher Details By Id", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/teacher/{teacherId}")
     public ResponseEntity<Response<UserDto>> getTeacherById(@PathVariable String teacherId) {
         Response<UserDto> response = userService.getTeacherById(teacherId);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @Operation(summary = "Get Region Admin Details By Id", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/region/{regionAdminId}")
+    public ResponseEntity<Response<UserDto>> getRegionAdminById(@PathVariable String regionAdminId) {
+        Response<UserDto> response = userService.getRegionAdminById(regionAdminId);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @Operation(summary = "Get Educational Admin Details By Id", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/institute/{instituteAdminId}")
+    public ResponseEntity<Response<UserDto>> getInstituteAdminById(@PathVariable String instituteAdminId) {
+        Response<UserDto> response = userService.getInsitituteAdminById(instituteAdminId);
         return ResponseEntity.ok().body(response);
     }
 

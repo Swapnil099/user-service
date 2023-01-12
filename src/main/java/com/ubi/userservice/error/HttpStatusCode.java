@@ -58,7 +58,9 @@ public enum HttpStatusCode {
     USER_NOT_EXISTS(110, "User with given roleType not exist"),
     PRINCIPAL_NOT_EXISTS(110, "Principal With Given ID Not Exist"),
     TEACHER_NOT_EXISTS(110, "Teacher With Given ID Not Exist"),
+    REGION_ADMIN_NOT_EXISTS(110, "Regional Admin With Given ID Not Exist"),
 
+    INSTITUTE_ADMIN_NOT_EXISTS(110, "Institute Admin With Given ID Not Exist"),
 
     INVALID_COLUMN_NAME(111, "Invalid column name provided"),
 
