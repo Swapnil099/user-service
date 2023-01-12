@@ -62,18 +62,28 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public ResponseEntity<Response<UserPermissionsDto>> validateTokenAndGetUser(String jwtToken) {
         String username = null;
         User user = null;
+
+        if (jwtToken != null && jwtToken.startsWith("Bearer ")){
+            String newToken = jwtToken.substring(7);
+            try {
+                jwtUtil.isTokenExpired(newToken);
+            }
+            catch (Exception e){
+                throw new CustomException(
+                        HttpStatusCode.TOKEN_EXPIRED.getCode(),
+                        HttpStatusCode.TOKEN_EXPIRED,
+                        HttpStatusCode.TOKEN_EXPIRED.getMessage(),
+                        new Result<>());
+            }
+        }
+
+
         Response<UserPermissionsDto> response = new Response<>();
         if (jwtToken != null && jwtToken.startsWith("Bearer ")) {
             jwtToken = jwtToken.substring(7);
             System.out.println(jwtToken);
             try {
                 username = jwtUtil.extractUsername(jwtToken);
-                if(jwtUtil.isTokenExpired(jwtToken)){
-                    response.setStatusCode(HttpStatusCode.TOKEN_EXPIRED.getCode());
-                    response.setMessage(HttpStatusCode.TOKEN_EXPIRED.getMessage());
-                    response.setResult(new Result<>(null));
-                    return ResponseEntity.badRequest().body(response);
-                }
             } catch (Exception e) {
                 response.setStatusCode(HttpStatusCode.UNAUTHORIZED_EXCEPTION.getCode());
                 response.setMessage(HttpStatusCode.UNAUTHORIZED_EXCEPTION.getMessage());
@@ -89,6 +99,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         user = userService.getUserEntityByUsername(username);
+
         UserPermissionsDto userPermissionsDto = userMapper.userPermissionsDto(user);
         userPermissionsDto.setJwtToken(jwtToken);
         response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());
@@ -101,7 +112,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public Response<JwtResponse> refreshUserAccessToken(String refreshToken) {
         String username = null;
         Response<JwtResponse> response = new Response<>();
-
+        System.out.println(refreshToken + " refresh token ");
         try {
             jwtUtil.isTokenExpired(refreshToken);
         }
@@ -133,6 +144,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());
         response.setMessage(HttpStatusCode.SUCCESSFUL.getMessage());
         response.setResult(new Result<>(jwtResponse));
+        System.out.println("reresh token request successfull  -------");
         return response;
     }
 }

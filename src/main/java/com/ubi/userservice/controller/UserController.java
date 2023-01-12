@@ -5,12 +5,12 @@ import com.ubi.userservice.dto.user.PasswordChangeDto;
 import com.ubi.userservice.dto.user.UserCreatedDto;
 import com.ubi.userservice.dto.user.UserCreationDto;
 import com.ubi.userservice.dto.user.UserDto;
-import com.ubi.userservice.entity.User;
 import com.ubi.userservice.roleaccessinterface.IsPrincipal;
 import com.ubi.userservice.roleaccessinterface.IsSuperAdmin;
 import com.ubi.userservice.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -47,6 +47,20 @@ public class UserController {
         return ResponseEntity.ok().body(response);
     }
 
+    @Operation(summary = "Get Principal Details By Id", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/principal/{principalId}")
+    public ResponseEntity<Response<UserDto>> getPrincipalById(@PathVariable String principalId) {
+        Response<UserDto> response = userService.getPrincipalById(principalId);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @Operation(summary = "Get Principal Details By Id", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping("/teacher/{teacherId}")
+    public ResponseEntity<Response<UserDto>> getTeacherById(@PathVariable String teacherId) {
+        Response<UserDto> response = userService.getTeacherById(teacherId);
+        return ResponseEntity.ok().body(response);
+    }
+
     @Operation(summary = "Delete User By Id", security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping("/{userId}")
     public ResponseEntity<Response<UserDto>> deleteUserById(@PathVariable String userId) {
@@ -70,7 +84,7 @@ public class UserController {
 
     @Operation(summary = "Change Password Of User By Id", security = @SecurityRequirement(name = "bearerAuth"))
     @PatchMapping ("/password/{userId}")
-    public ResponseEntity<Response<String>> deactivateUserById(@PathVariable String userId, @RequestBody PasswordChangeDto passwordChangeDto) {
+    public ResponseEntity<Response<String>> changePasswordDto(@PathVariable String userId, @RequestBody PasswordChangeDto passwordChangeDto) {
         Response<String> response = userService.changeSelfPassword(userId, passwordChangeDto.getNewPassword());
         return ResponseEntity.ok().body(response);
     }
