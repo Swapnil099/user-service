@@ -1,5 +1,6 @@
 package com.ubi.userservice.dto.user;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ubi.userservice.dto.contactInfo.ContactInfoDto;
 import com.ubi.userservice.dto.role.RoleDto;
 import lombok.AllArgsConstructor;

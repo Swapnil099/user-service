@@ -62,14 +62,15 @@ public class UserController {
     }
 
     @Operation(summary = "Get Region Admin Details By Id", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping("/region/{regionAdminId}")
+    @GetMapping("/regionadmin/{regionAdminId}")
     public ResponseEntity<Response<UserDto>> getRegionAdminById(@PathVariable String regionAdminId) {
+        System.out.println("region admin API hitt");
         Response<UserDto> response = userService.getRegionAdminById(regionAdminId);
         return ResponseEntity.ok().body(response);
     }
 
     @Operation(summary = "Get Educational Admin Details By Id", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping("/institute/{instituteAdminId}")
+    @GetMapping("/instituteadmin/{instituteAdminId}")
     public ResponseEntity<Response<UserDto>> getInstituteAdminById(@PathVariable String instituteAdminId) {
         Response<UserDto> response = userService.getInsitituteAdminById(instituteAdminId);
         return ResponseEntity.ok().body(response);
