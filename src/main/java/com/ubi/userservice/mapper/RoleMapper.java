@@ -29,7 +29,7 @@ public class RoleMapper {
     }
 
     public RoleUserDto toRoleUserDTO(User user){
-        return new RoleUserDto(user.getId(),user.getUsername());
+        return new RoleUserDto(user.getId(),user.getUsername(),user.getContactInfo().getFirstName(),user.getContactInfo().getLastName());
     }
 
     public Set<RoleUserDto> toRoleUsers(Set<User> users){

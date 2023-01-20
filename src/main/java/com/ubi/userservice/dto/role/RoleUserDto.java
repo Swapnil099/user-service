@@ -10,4 +10,6 @@ import lombok.RequiredArgsConstructor;
 public class RoleUserDto {
     Long id;
     String username;
+    String firstName;
+    String lastName;
 }
