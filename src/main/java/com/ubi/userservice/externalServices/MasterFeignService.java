@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @FeignClient(name="MASTER-SERVICE")
 @Component
-public interface masterFeignService {
+public interface MasterFeignService {
 
     @GetMapping("/class/teacher/{teacherId}")
     public ResponseEntity<Response<ClassDto>> getClassByTeacherId(@RequestHeader(value = "Authorization", required = true) String authorizationHeaderToken, @PathVariable String teacherId);
