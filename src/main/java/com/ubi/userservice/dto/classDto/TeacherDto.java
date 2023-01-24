@@ -1,4 +1,4 @@
-package com.ubi.userservice.dto.schoolDto;
+package com.ubi.userservice.dto.classDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,9 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PrincipalDto {
+public class TeacherDto {
 	private Long userId;
 	private String firstName;
 	private String lastName;
-	private Integer schoolId;
+	private Long classId;
+	private Integer schoolOrCollegeId;
 }

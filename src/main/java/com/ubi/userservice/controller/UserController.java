@@ -64,7 +64,6 @@ public class UserController {
     @Operation(summary = "Get Region Admin Details By Id", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/regionadmin/{regionAdminId}")
     public ResponseEntity<Response<UserDto>> getRegionAdminById(@PathVariable String regionAdminId) {
-        System.out.println("region admin API hitt");
         Response<UserDto> response = userService.getRegionAdminById(regionAdminId);
         return ResponseEntity.ok().body(response);
     }
@@ -115,6 +114,13 @@ public class UserController {
     @GetMapping("/{roleType}/{userId}")
     public ResponseEntity<Response<Boolean>> checkIfUserExist(@PathVariable String roleType,@PathVariable String userId) {
         Response<Boolean> response = userService.isUserExistsWithGivenRole(roleType, userId);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @Operation(summary = "Reset Password Of User By Id", security = @SecurityRequirement(name = "bearerAuth"))
+    @PatchMapping ("/reset/{userId}")
+    public ResponseEntity<Response<String>> resetPassword(@PathVariable String userId, @RequestBody PasswordChangeDto passwordChangeDto) {
+        Response<String> response = userService.resetPassword(userId, passwordChangeDto.getNewPassword());
         return ResponseEntity.ok().body(response);
     }
 }
