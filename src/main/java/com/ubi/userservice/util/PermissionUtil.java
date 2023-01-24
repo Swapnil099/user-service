@@ -40,4 +40,17 @@ public class PermissionUtil {
         }
         return roles;
     }
+
+    public String getCurrentUsersRoleType(){
+        UserPermissionsDto userPermissionsDto = (UserPermissionsDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(userPermissionsDto != null) return userPermissionsDto.getRole();
+        return null;
+    }
+
+    public Long getCurrentUsersid(){
+        UserPermissionsDto userPermissionsDto = (UserPermissionsDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(userPermissionsDto != null) return userPermissionsDto.getId();
+        return null;
+    }
+
 }

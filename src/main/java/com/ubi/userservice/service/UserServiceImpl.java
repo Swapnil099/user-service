@@ -16,6 +16,7 @@ import com.ubi.userservice.mapper.UserMapper;
 import com.ubi.userservice.repository.ContactInfoRepository;
 import com.ubi.userservice.repository.UserRepository;
 import com.ubi.userservice.util.PermissionUtil;
+import com.ubi.userservice.util.ResetPasswordUtill;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,10 +46,14 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
+    private ResetPasswordUtill resetPasswordUtill;
+
+    @Autowired
     Result result;
 
     @Autowired
     PermissionUtil permissionUtil;
+
 
     @Autowired
     ContactInfoMapper contactInfoMapper;
@@ -307,6 +312,55 @@ public class UserServiceImpl implements UserService {
         response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());
         response.setMessage(HttpStatusCode.SUCCESSFUL.getMessage());
         response.setResult(new Result<>("PASSWORD CHANGED SUCCESSFULLY"));
+        return response;
+    }
+
+    @Override
+    public Response<String> resetPassword(String userId, String newPassword) {
+        Optional<User> currUser = userRepository.findById(Long.parseLong(userId));
+
+        if(!currUser.isPresent()){
+            throw new CustomException(HttpStatusCode.BAD_REQUEST_EXCEPTION.getCode(),
+                    HttpStatusCode.BAD_REQUEST_EXCEPTION,
+                    "User With Given Id Not Found",
+                    new Result<>(null));
+        }
+        User user = currUser.get();
+        String currentUserRole = permissionUtil.getCurrentUsersRoleType();
+        String passwordResetUserRole = user.getRole().getRoleType();
+
+        if(currentUserRole.equals("ROLE_PRINCIPAL") && passwordResetUserRole.equals("ROLE_TEACHER")){
+            return resetPasswordUtill.resetTeacherPasswordAsPrincipal(userId,newPassword);
+        }
+
+        if(currentUserRole.equals("ROLE_REGIONAL_OFFICE_ADMIN") && passwordResetUserRole.equals("ROLE_TEACHER")){
+            return resetPasswordUtill.resetTeacherPasswordAsRegionAdmin(userId,newPassword);
+        }
+
+        if(currentUserRole.equals("ROLE_EDUCATIONAL_INSTITUTE_HQ_ADMIN") && passwordResetUserRole.equals("ROLE_TEACHER")){
+            return resetPasswordUtill.resetTeacherPasswordAsInstituteAdmin(userId,newPassword);
+        }
+
+        if(currentUserRole.equals("ROLE_REGIONAL_OFFICE_ADMIN") && passwordResetUserRole.equals("ROLE_PRINCIPAL")){
+            return resetPasswordUtill.resetPrincipalPasswordAsRegionAdmin(userId,newPassword);
+        }
+
+        if(currentUserRole.equals("ROLE_EDUCATIONAL_INSTITUTE_HQ_ADMIN") && passwordResetUserRole.equals("ROLE_PRINCIPAL")){
+            return resetPasswordUtill.resetPrincipalPasswordAsInstituteAdmin(userId,newPassword);
+        }
+
+        if(currentUserRole.equals("ROLE_EDUCATIONAL_INSTITUTE_HQ_ADMIN") && passwordResetUserRole.equals("ROLE_REGIONAL_OFFICE_ADMIN")){
+            return resetPasswordUtill.resetRegionAdminPasswordAsInstituteAdmin(userId,newPassword);
+        }
+
+        if(currentUserRole.equals("ROLE_SUPER_ADMIN")){
+            return resetPasswordUtill.resetPassword(userId,newPassword);
+        }
+
+        Response<String> response = new Response<>();
+        response.setStatusCode(HttpStatusCode.BAD_REQUEST_EXCEPTION.getCode());
+        response.setMessage(HttpStatusCode.BAD_REQUEST_EXCEPTION.getMessage());
+        response.setResult(new Result<>("Unauthorize To Reset Password"));
         return response;
     }
 

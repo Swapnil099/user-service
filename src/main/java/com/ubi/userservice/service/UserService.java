@@ -41,6 +41,7 @@ public interface UserService {
 
      Response<String> changeSelfPassword(String userId, String newPassword);
 
+    Response<String> resetPassword(String userId, String newPassword);
      Response<UserDto> updateUserById(String userId,UserCreationDto userCreationDto);
 
     Response<Boolean> isUserExistsWithGivenRole(String roleType, String userId);
