@@ -225,7 +225,7 @@ public class ResetPasswordUtill {
 
          InstituteDto instituteDto = instituteResponse.getBody().getResult().getData();
          Integer instituteId = instituteDto.getId();
-         ResponseEntity<Response<Set<SchoolRegionDto>>> teacherResponse = masterFeignService.getAllPrincipalsInsideInstitute(currJwtToken, instituteId.toString());
+         ResponseEntity<Response<Set<SchoolRegionDto>>> teacherResponse = masterFeignService.getAllSchoolsInsideInstitute(currJwtToken, instituteId.toString());
          Set<SchoolRegionDto> SchoolRegionDtos = teacherResponse.getBody().getResult().getData();
 
          for(SchoolRegionDto schoolRegionDto:SchoolRegionDtos){
