@@ -44,6 +44,6 @@ public interface MasterFeignService {
     @GetMapping("/educationalInstitution/teachers/{instituteId}")
     ResponseEntity<Response<Set<TeacherDto>>> getAllTeachersInsideInstitute(@RequestHeader(value = "Authorization", required = true) String authorizationHeaderToken, @PathVariable String instituteId);
 
-    @GetMapping("/educationalInstitution/principals/{instituteId}")
-    ResponseEntity<Response<Set<SchoolRegionDto>>> getAllPrincipalsInsideInstitute(@RequestHeader(value = "Authorization", required = true) String authorizationHeaderToken, @PathVariable String instituteId);
+    @GetMapping("/educationalInstitution/schools/{instituteId}")
+    ResponseEntity<Response<Set<SchoolRegionDto>>> getAllSchoolsInsideInstitute(@RequestHeader(value = "Authorization", required = true) String authorizationHeaderToken, @PathVariable String instituteId);
 }
