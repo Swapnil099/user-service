@@ -4,6 +4,7 @@ package com.ubi.userservice.externalServices;
 import com.ubi.userservice.dto.classDto.ClassDto;
 import com.ubi.userservice.dto.classDto.TeacherDto;
 import com.ubi.userservice.dto.educationalInstitutiondto.InstituteDto;
+import com.ubi.userservice.dto.pagination.PaginationResponse;
 import com.ubi.userservice.dto.regionDto.RegionDetailsDto;
 import com.ubi.userservice.dto.response.Response;
 import com.ubi.userservice.dto.schoolDto.PrincipalDto;
@@ -45,5 +46,5 @@ public interface MasterFeignService {
     ResponseEntity<Response<Set<TeacherDto>>> getAllTeachersInsideInstitute(@RequestHeader(value = "Authorization", required = true) String authorizationHeaderToken, @PathVariable String instituteId);
 
     @GetMapping("/educationalInstitution/schools/{instituteId}")
-    ResponseEntity<Response<Set<SchoolRegionDto>>> getAllSchoolsInsideInstitute(@RequestHeader(value = "Authorization", required = true) String authorizationHeaderToken, @PathVariable String instituteId);
+    ResponseEntity<Response<PaginationResponse<Set<SchoolRegionDto>>>> getAllSchoolsInsideInstitute(@RequestHeader(value = "Authorization", required = true) String authorizationHeaderToken, @PathVariable String instituteId,@RequestParam Boolean isCollege);
 }

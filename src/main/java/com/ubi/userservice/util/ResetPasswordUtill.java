@@ -3,6 +3,7 @@
 import com.ubi.userservice.dto.classDto.ClassDto;
 import com.ubi.userservice.dto.classDto.TeacherDto;
 import com.ubi.userservice.dto.educationalInstitutiondto.InstituteDto;
+import com.ubi.userservice.dto.pagination.PaginationResponse;
 import com.ubi.userservice.dto.regionDto.RegionDetailsDto;
 import com.ubi.userservice.dto.regionDto.RegionGet;
 import com.ubi.userservice.dto.response.Response;
@@ -20,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -225,12 +227,27 @@ public class ResetPasswordUtill {
 
          InstituteDto instituteDto = instituteResponse.getBody().getResult().getData();
          Integer instituteId = instituteDto.getId();
-         ResponseEntity<Response<Set<SchoolRegionDto>>> teacherResponse = masterFeignService.getAllSchoolsInsideInstitute(currJwtToken, instituteId.toString());
-         Set<SchoolRegionDto> SchoolRegionDtos = teacherResponse.getBody().getResult().getData();
+         ResponseEntity<Response<PaginationResponse<Set<SchoolRegionDto>>>> schoolResponse = masterFeignService.getAllSchoolsInsideInstitute(currJwtToken, instituteId.toString(),false);
+         Set<SchoolRegionDto> SchoolRegionDtos = new HashSet<>();
+         if(schoolResponse.getBody().getResult().getData() != null){
+             SchoolRegionDtos = schoolResponse.getBody().getResult().getData().getListOfResults();
+         }
 
          for(SchoolRegionDto schoolRegionDto:SchoolRegionDtos){
              if(schoolRegionDto.getPrincipalDto() != null){
                 if(schoolRegionDto.getPrincipalDto().getUserId().toString().equals(userId)) return this.resetPassword(userId,newPassword);
+             }
+         }
+
+         ResponseEntity<Response<PaginationResponse<Set<SchoolRegionDto>>>> collegeResponse = masterFeignService.getAllSchoolsInsideInstitute(currJwtToken, instituteId.toString(),true);
+         Set<SchoolRegionDto> collegeRegionDtos= new HashSet<>();
+         if(collegeResponse.getBody().getResult().getData() != null){
+             collegeRegionDtos = collegeResponse.getBody().getResult().getData().getListOfResults();
+         }
+
+         for(SchoolRegionDto collegeRegionDto:collegeRegionDtos){
+             if(collegeRegionDto.getPrincipalDto() != null){
+                 if(collegeRegionDto.getPrincipalDto().getUserId().toString().equals(userId)) return this.resetPassword(userId,newPassword);
              }
          }
 
