@@ -18,4 +18,4 @@ spring:
       fail-on-empty-beans: false
 
   config:
-    import: optional:configserver:http://localhost:8888
+    import: optional:configserver:https://localhost:8888
