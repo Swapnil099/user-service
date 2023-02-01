@@ -1,5 +1,6 @@
 package com.ubi.userservice.controller;
 
+import com.ubi.userservice.dto.pagination.PaginationResponse;
 import com.ubi.userservice.dto.response.Response;
 import com.ubi.userservice.dto.user.PasswordChangeDto;
 import com.ubi.userservice.dto.user.UserCreatedDto;
@@ -17,6 +18,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -33,10 +35,13 @@ public class UserController {
         return ResponseEntity.ok().body(userResponse);
     }
 
-    @Operation(summary = "Get All Users", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Get All Users With Pagination", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping
-    public ResponseEntity<Response<List<UserDto>>> getAllUsers() {
-        Response<List<UserDto>> allUserDtoResponse = userService.getAllUsers();
+    public ResponseEntity<Response<PaginationResponse<List<UserDto>>>> getAllUsers(@RequestParam( defaultValue = "*") String fieldName,
+                                                               @RequestParam( defaultValue = "*") String fieldQuery,
+                                                               @RequestParam(value = "PageNumber", defaultValue = "0", required = false) Integer pageNumber,
+                                                               @RequestParam(value = "PageSize", defaultValue = "10000000", required = false) Integer pageSize) throws ParseException {
+        Response<PaginationResponse<List<UserDto>>> allUserDtoResponse = userService.getAllUsersWithPagination(fieldName,fieldQuery,pageNumber,pageSize);
         return ResponseEntity.ok().body(allUserDtoResponse);
     }
 

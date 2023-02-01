@@ -1,6 +1,7 @@
 package com.ubi.userservice.service;
 
 
+import com.ubi.userservice.dto.pagination.PaginationResponse;
 import com.ubi.userservice.dto.response.Response;
 import com.ubi.userservice.dto.user.UserCreatedDto;
 import com.ubi.userservice.dto.user.UserCreationDto;
@@ -19,11 +20,14 @@ import com.ubi.userservice.util.PermissionUtil;
 import com.ubi.userservice.util.ResetPasswordUtill;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,14 +64,99 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Response<List<UserDto>> getAllUsers() {
-        permissionUtil.hasPermission("CREATE-USER");
-
         List<User> users = userRepository.findAll();
         List<UserDto> allUsers = users.stream().map(userMapper::toDto).collect(Collectors.toList());
         Response<List<UserDto>> response = new Response<>();
         response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());
         response.setMessage(HttpStatusCode.SUCCESSFUL.getMessage());
         response.setResult(new Result<>(allUsers));
+        return response;
+    }
+
+    @Override
+    public Response<PaginationResponse<List<UserDto>>> getAllUsersWithPagination(String fieldName, String fieldQuery, Integer pageNumber, Integer pageSize) throws ParseException {
+        Page<User> users = null;
+        Pageable paging = PageRequest.of(pageNumber, pageSize);
+
+        String strDateRegEx ="^((?:19|20)[0-9][0-9])-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])$";
+        if(!fieldName.equals("*") && !fieldQuery.equals("*"))
+        {
+            if(fieldQuery.matches(strDateRegEx)) {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+                Date localDate = formatter.parse(fieldQuery);
+                if(fieldName.equalsIgnoreCase("dateOfBirth")) users = userRepository.getAllUserByDOB(localDate,paging);
+            } else {
+                if(fieldName.equalsIgnoreCase("firstName")) {
+                    users = userRepository.getAllUserByFirstName(fieldQuery, paging);
+                }
+                if(fieldName.equalsIgnoreCase("lastName")) {
+                    users = userRepository.getAllUserByLastName(fieldQuery, paging);
+                }
+                if(fieldName.equalsIgnoreCase("fullName")) {
+                    users = userRepository.getAllUserByFullName(fieldQuery, paging);
+                }
+                if(fieldName.equalsIgnoreCase("username")) {
+                    users = userRepository.getAllUserByUsername(fieldQuery, paging);
+                }
+                if(fieldName.equalsIgnoreCase("middleName")) {
+                    users = userRepository.getAllUserByMiddleName(fieldQuery, paging);
+                }
+                if(fieldName.equalsIgnoreCase("gender")) {
+                    users = userRepository.getAllUserByGender(fieldQuery, paging);
+                }
+                if(fieldName.equalsIgnoreCase("email")) {
+                    users = userRepository.getAllUserByEmail(fieldQuery, paging);
+                }
+                if(fieldName.equalsIgnoreCase("contactNumber")) {
+                    users = userRepository.getAllUserByContactNumber(fieldQuery, paging);
+                }
+                if(fieldName.equalsIgnoreCase("nationality")) {
+                    users = userRepository.getAllUserByNationality(fieldQuery, paging);
+                }
+                if(fieldName.equalsIgnoreCase("aadhar")) {
+                    users = userRepository.getAllUserByAadhar(fieldQuery, paging);
+                }
+                if(fieldName.equalsIgnoreCase("address")) {
+                    users = userRepository.getAllUserByAddress(fieldQuery, paging);
+                }
+                if(fieldName.equalsIgnoreCase("isEnable")) {
+                    users = userRepository.getAllUserByIsEnabled(Boolean.parseBoolean(fieldQuery),paging);
+                }
+                if(fieldName.equalsIgnoreCase("age")) {
+                    users = userRepository.getAllUserByAge(Integer.parseInt(fieldQuery),paging);
+                }
+                if(fieldName.equalsIgnoreCase("BloodGroup")) {
+                    users = userRepository.getAllUserByBloodGroup(fieldQuery,paging);
+                }
+                if(fieldName.equalsIgnoreCase("ContactNumber")) {
+                    users = userRepository.getAllUserByBloodGroup(fieldQuery,paging);
+                }
+                if(fieldName.equalsIgnoreCase("roleType")) {
+                    System.out.println("here ");
+                    users = userRepository.getAllUserByRole(fieldQuery,paging);
+                }
+            }
+        } else users = userRepository.getAllUser(paging);
+
+        Response<PaginationResponse<List<UserDto>>> response = new Response<>();
+        if (users == null || users.isEmpty()) {
+            response.setStatusCode(HttpStatusCode.NO_CONTENT.getCode());
+            response.setMessage("No User Found");
+            response.setResult( new Result(null) );
+            return response;
+        }
+
+        List<UserDto> userList = users.toList().stream().filter(Objects::nonNull).map(user -> userMapper.toDto(user)).collect(Collectors.toList());
+
+        PaginationResponse<List<UserDto>> paginationResponse = new PaginationResponse<>(userList,users.getTotalPages(),users.getTotalElements());
+
+        Result<PaginationResponse<List<UserDto>>> result = new Result<>();
+        result.setData(paginationResponse);
+
+        response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());
+        response.setMessage("Users retrived");
+        response.setResult(result);
+
         return response;
     }
 
@@ -431,5 +520,6 @@ public class UserServiceImpl implements UserService {
         response.setResult(new Result<>(isExists));
         return response;
     }
+
 
 }

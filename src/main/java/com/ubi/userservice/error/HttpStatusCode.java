@@ -151,7 +151,8 @@ public enum HttpStatusCode {
 
     REGION_UPDATED(200,"Region Updated Successfully"),
 
-    MAPPING_ALREADY_EXIST(108,"Mapping Already Exist");
+    MAPPING_ALREADY_EXIST(108,"Mapping Already Exist"),
+    NO_CONTENT(204, "No Content Found");
 
     private int code;
     private String message;

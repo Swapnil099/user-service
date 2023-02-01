@@ -1,17 +1,21 @@
 package com.ubi.userservice.service;
 
 
+import com.ubi.userservice.dto.pagination.PaginationResponse;
 import com.ubi.userservice.dto.response.Response;
 import com.ubi.userservice.dto.user.UserCreatedDto;
 import com.ubi.userservice.dto.user.UserCreationDto;
 import com.ubi.userservice.dto.user.UserDto;
 import com.ubi.userservice.entity.User;
 
+import java.text.ParseException;
 import java.util.List;
 
 public interface UserService {
 
     Response<List<UserDto>> getAllUsers();
+
+    Response<PaginationResponse<List<UserDto>>> getAllUsersWithPagination(String fieldName, String searchByField, Integer pageNumber, Integer pageSize) throws ParseException;
 
     Response<UserCreatedDto> createNewUser(UserCreationDto userCreationDTO);
 
@@ -45,4 +49,5 @@ public interface UserService {
      Response<UserDto> updateUserById(String userId,UserCreationDto userCreationDto);
 
     Response<Boolean> isUserExistsWithGivenRole(String roleType, String userId);
+
 }
