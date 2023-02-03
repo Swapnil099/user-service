@@ -12,6 +12,7 @@ public class UserDto {
     private Long id;
     private String username;
     private Boolean isActivate;
+    private Long updatedByUserId;
     private String roleType;
     private RoleDto roleDto;
     private ContactInfoDto contactInfoDto;

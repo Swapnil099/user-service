@@ -44,7 +44,7 @@ public class UserMapper {
         ContactInfoDto contactInfoDto = null;
         if(user.getContactInfo() != null) contactInfoDto = contactInfoMapper.toContactInfoDto(user.getContactInfo());
 
-        return new UserDto(user.getId(),user.getUsername(),user.getIsEnabled(),roleType,roleDto,contactInfoDto);
+        return new UserDto(user.getId(),user.getUsername(),user.getIsEnabled(),user.getModifiedBy(),roleType,roleDto,contactInfoDto);
     }
 
     public User toUser(UserCreationDto userCreationDTO) {

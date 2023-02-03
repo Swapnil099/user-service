@@ -2,6 +2,7 @@ package com.ubi.userservice.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ubi.userservice.model.Auditable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Entity(name="permission")
-public class Permission {
+public class Permission extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

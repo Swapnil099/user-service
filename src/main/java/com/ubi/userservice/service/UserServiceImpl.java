@@ -132,7 +132,6 @@ public class UserServiceImpl implements UserService {
                     users = userRepository.getAllUserByBloodGroup(fieldQuery,paging);
                 }
                 if(fieldName.equalsIgnoreCase("roleType")) {
-                    System.out.println("here ");
                     users = userRepository.getAllUserByRole(fieldQuery,paging);
                 }
             }
@@ -480,11 +479,13 @@ public class UserServiceImpl implements UserService {
                     result);
         }
         user.setRole(role);
-
+        String previousUsername = user.getUsername();
+        user.setUsername("tempUserName");
         ContactInfo contactInfo = contactInfoService.updateContactInfo(userCreationDto.getContactInfoDto(),user.getContactInfo().getId());
         user.setContactInfo(contactInfo);
-
-        userRepository.save(user);
+        User newUser = userRepository.save(user);
+        newUser.setUsername(previousUsername);
+        userRepository.save(newUser);
 
         Response response = new Response<>();
         response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());

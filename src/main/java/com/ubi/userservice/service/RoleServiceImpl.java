@@ -197,7 +197,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Response<RoleDto> updateRoleById(String roleId, RoleCreationDto roleCreationDto) {
         Role roleWithGivenRoleType = roleRepository.getRoleByRoleType(roleCreationDto.getRoleType());
-        if(roleWithGivenRoleType != null) {
+        if(roleWithGivenRoleType != null && !roleCreationDto.getRoleType().equals(roleWithGivenRoleType.getRoleType())) {
             throw new CustomException(
                     HttpStatusCode.ROLETYPE_NOT_AVAILAIBLE.getCode(),
                     HttpStatusCode.ROLETYPE_NOT_AVAILAIBLE,
@@ -210,6 +210,11 @@ public class RoleServiceImpl implements RoleService {
                     HttpStatusCode.RESOURCE_NOT_FOUND,
                     HttpStatusCode.RESOURCE_NOT_FOUND.getMessage(),
                     result);
+        }
+        role.setPermissions(new HashSet<>());
+        for(String permissionType:roleCreationDto.getPermissions()){
+            Permission permission = permissionService.getPermissionFromType(permissionType);
+            if(permission != null && !role.getPermissions().contains(permission)) role.getPermissions().add(permission);
         }
 
         role.setRoleName(roleCreationDto.getRoleName());
