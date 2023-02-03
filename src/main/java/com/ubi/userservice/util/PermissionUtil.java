@@ -48,8 +48,10 @@ public class PermissionUtil {
     }
 
     public Long getCurrentUsersid(){
-        UserPermissionsDto userPermissionsDto = (UserPermissionsDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(userPermissionsDto != null) return userPermissionsDto.getId();
+        if(SecurityContextHolder.getContext().getAuthentication() != null){
+            UserPermissionsDto userPermissionsDto = (UserPermissionsDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if(userPermissionsDto != null) return userPermissionsDto.getId();
+        }
         return null;
     }
 

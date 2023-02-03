@@ -3,6 +3,7 @@ package com.ubi.userservice.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.ubi.userservice.model.Auditable;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,7 +18,7 @@ import java.time.LocalDate;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "ContactInfo")
 @Builder
-public class ContactInfo {
+public class ContactInfo extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
