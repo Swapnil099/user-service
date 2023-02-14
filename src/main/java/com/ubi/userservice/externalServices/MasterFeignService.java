@@ -2,6 +2,7 @@ package com.ubi.userservice.externalServices;
 
 
 import com.ubi.userservice.dto.classDto.ClassDto;
+import com.ubi.userservice.dto.classDto.ClassStudentDto;
 import com.ubi.userservice.dto.classDto.TeacherDto;
 import com.ubi.userservice.dto.educationalInstitutiondto.InstituteDto;
 import com.ubi.userservice.dto.pagination.PaginationResponse;
@@ -9,6 +10,8 @@ import com.ubi.userservice.dto.regionDto.RegionDetailsDto;
 import com.ubi.userservice.dto.response.Response;
 import com.ubi.userservice.dto.schoolDto.PrincipalDto;
 import com.ubi.userservice.dto.schoolDto.SchoolRegionDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -47,4 +50,16 @@ public interface MasterFeignService {
 
     @GetMapping("/educationalInstitution/schools/{instituteId}")
     ResponseEntity<Response<PaginationResponse<Set<SchoolRegionDto>>>> getAllSchoolsInsideInstitute(@RequestHeader(value = "Authorization", required = true) String authorizationHeaderToken, @PathVariable String instituteId,@RequestParam Boolean isCollege);
+
+    @PutMapping("/class/removeTeacher/{classId}")
+    public ResponseEntity<Response<ClassStudentDto>> removeTeacherFromClass(@RequestHeader(value = "Authorization", required = true) String authorizationHeaderToken, @PathVariable String classId);
+
+    @PutMapping("/educationalInstitution/removeAdmin/{instituteId}")
+    public ResponseEntity<Response<InstituteDto>> removeInstituteAdmin(@RequestHeader(value = "Authorization", required = true) String authorizationHeaderToken, @PathVariable String instituteId);
+
+    @PutMapping("/region/removeAdmin/{regionId}")
+    public ResponseEntity<Response<RegionDetailsDto>> removeRegionAdmin(@RequestHeader(value = "Authorization", required = true) String authorizationHeaderToken, @PathVariable String regionId);
+
+    @PutMapping("/school/removePrincipal/{schoolId}")
+    public ResponseEntity<Response<SchoolRegionDto>> removeSchoolPrincipal(@RequestHeader(value = "Authorization", required = true) String authorizationHeaderToken, @PathVariable String schoolId);
 }

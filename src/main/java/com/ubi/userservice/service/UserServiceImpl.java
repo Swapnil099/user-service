@@ -1,8 +1,13 @@
 package com.ubi.userservice.service;
 
 
+import com.ubi.userservice.dto.classDto.ClassDto;
+import com.ubi.userservice.dto.classDto.ClassStudentDto;
+import com.ubi.userservice.dto.educationalInstitutiondto.InstituteDto;
 import com.ubi.userservice.dto.pagination.PaginationResponse;
+import com.ubi.userservice.dto.regionDto.RegionDetailsDto;
 import com.ubi.userservice.dto.response.Response;
+import com.ubi.userservice.dto.schoolDto.SchoolRegionDto;
 import com.ubi.userservice.dto.user.UserCreatedDto;
 import com.ubi.userservice.dto.user.UserCreationDto;
 import com.ubi.userservice.dto.user.UserDto;
@@ -12,6 +17,7 @@ import com.ubi.userservice.entity.User;
 import com.ubi.userservice.error.CustomException;
 import com.ubi.userservice.error.HttpStatusCode;
 import com.ubi.userservice.error.Result;
+import com.ubi.userservice.externalServices.MasterFeignService;
 import com.ubi.userservice.mapper.ContactInfoMapper;
 import com.ubi.userservice.mapper.UserMapper;
 import com.ubi.userservice.repository.ContactInfoRepository;
@@ -23,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.text.ParseException;
@@ -53,6 +60,9 @@ public class UserServiceImpl implements UserService {
     private ResetPasswordUtill resetPasswordUtill;
 
     @Autowired
+    MasterFeignService masterFeignService;
+
+    @Autowired
     Result result;
 
     @Autowired
@@ -62,16 +72,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     ContactInfoMapper contactInfoMapper;
 
-    @Override
-    public Response<List<UserDto>> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        List<UserDto> allUsers = users.stream().map(userMapper::toDto).collect(Collectors.toList());
-        Response<List<UserDto>> response = new Response<>();
-        response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());
-        response.setMessage(HttpStatusCode.SUCCESSFUL.getMessage());
-        response.setResult(new Result<>(allUsers));
-        return response;
-    }
 
     @Override
     public Response<PaginationResponse<List<UserDto>>> getAllUsersWithPagination(String fieldName, String fieldQuery, Integer pageNumber, Integer pageSize) throws ParseException {
@@ -196,6 +196,12 @@ public class UserServiceImpl implements UserService {
                     HttpStatusCode.RESOURCE_NOT_FOUND.getMessage(),
                     result);
         }
+        if(currUser.get().getIsDeleted()) {
+            throw new CustomException(HttpStatusCode.RESOURCE_ALREADY_DELETED.getCode(),
+                    HttpStatusCode.RESOURCE_ALREADY_DELETED,
+                    "User with given Id is deleted",
+                    result);
+        }
         User user = currUser.get();
         UserDto userDto = userMapper.toDto(user);
         response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());
@@ -212,6 +218,12 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(HttpStatusCode.PRINCIPAL_NOT_EXISTS.getCode(),
                     HttpStatusCode.PRINCIPAL_NOT_EXISTS,
                     HttpStatusCode.PRINCIPAL_NOT_EXISTS.getMessage(),
+                    result);
+        }
+        if(currUser.get().getIsDeleted()){
+            throw new CustomException(HttpStatusCode.RESOURCE_ALREADY_DELETED.getCode(),
+                    HttpStatusCode.RESOURCE_ALREADY_DELETED,
+                    "Principal with given ID is deleted",
                     result);
         }
 
@@ -239,6 +251,12 @@ public class UserServiceImpl implements UserService {
                     HttpStatusCode.TEACHER_NOT_EXISTS.getMessage(),
                     result);
         }
+        if(currUser.get().getIsDeleted()){
+            throw new CustomException(HttpStatusCode.RESOURCE_ALREADY_DELETED.getCode(),
+                    HttpStatusCode.RESOURCE_ALREADY_DELETED,
+                    "Teacher with given ID is deleted",
+                    result);
+        }
 
         if(!currUser.get().getRole().getRoleType().equals("ROLE_TEACHER")){
             throw new CustomException(HttpStatusCode.TEACHER_NOT_EXISTS.getCode(),
@@ -264,6 +282,12 @@ public class UserServiceImpl implements UserService {
                     HttpStatusCode.REGION_ADMIN_NOT_EXISTS.getMessage(),
                     result);
         }
+        if(currUser.get().getIsDeleted()){
+            throw new CustomException(HttpStatusCode.RESOURCE_ALREADY_DELETED.getCode(),
+                    HttpStatusCode.RESOURCE_ALREADY_DELETED,
+                    "Region admin with given ID is deleted",
+                    result);
+        }
 
         if(!currUser.get().getRole().getRoleType().equals("ROLE_REGIONAL_OFFICE_ADMIN")){
             throw new CustomException(HttpStatusCode.REGION_ADMIN_NOT_EXISTS.getCode(),
@@ -287,6 +311,12 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(HttpStatusCode.INSTITUTE_ADMIN_NOT_EXISTS.getCode(),
                     HttpStatusCode.INSTITUTE_ADMIN_NOT_EXISTS,
                     HttpStatusCode.INSTITUTE_ADMIN_NOT_EXISTS.getMessage(),
+                    result);
+        }
+        if(currUser.get().getIsDeleted()){
+            throw new CustomException(HttpStatusCode.RESOURCE_ALREADY_DELETED.getCode(),
+                    HttpStatusCode.RESOURCE_ALREADY_DELETED,
+                    "Institute Admin with given ID is deleted",
                     result);
         }
 
@@ -325,7 +355,48 @@ public class UserServiceImpl implements UserService {
                     HttpStatusCode.RESOURCE_NOT_FOUND.getMessage(),
                     result);
         }
-        userRepository.deleteById(Long.parseLong(userId));
+        if(currUser.get().getIsDeleted()) {
+            throw new CustomException(HttpStatusCode.RESOURCE_ALREADY_DELETED.getCode(),
+                    HttpStatusCode.RESOURCE_ALREADY_DELETED,
+                    "User with given ID is already deleted",
+                    result);
+        }
+        User user = currUser.get();
+        String currJwtToken = "Bearer " + permissionUtil.getCurrentUsersToken();
+
+        switch (user.getRole().getRoleType()) {
+            case "ROLE_TEACHER":
+                ResponseEntity<Response<ClassDto>> classResponse = masterFeignService.getClassByTeacherId(currJwtToken, user.getId().toString());
+                System.out.println("response ***** " + classResponse.getBody().toString());
+                if (classResponse.getBody().getResult().getData() != null){
+                    ResponseEntity<Response<ClassStudentDto>> respones = masterFeignService.removeTeacherFromClass(currJwtToken,classResponse.getBody().getResult().getData().getClassId().toString());
+                }
+                break;
+            case "ROLE_PRINCIPAL":
+                ResponseEntity<Response<SchoolRegionDto>> schoolResponse = masterFeignService.getSchoolByPrincipalId(currJwtToken, user.getId().toString());
+                if (schoolResponse.getBody().getResult().getData() != null) {
+                    Integer schoolId = schoolResponse.getBody().getResult().getData().getSchoolDto().getSchoolId();
+                    ResponseEntity<Response<SchoolRegionDto>> response = masterFeignService.removeSchoolPrincipal(currJwtToken,schoolId.toString());
+                }
+                break;
+            case "ROLE_REGIONAL_OFFICE_ADMIN":
+                ResponseEntity<Response<RegionDetailsDto>> regionResponse = masterFeignService.getRegionByAdminId(currJwtToken, user.getId().toString());
+                if (regionResponse.getBody().getResult().getData() != null) {
+                    Integer regionId = regionResponse.getBody().getResult().getData().getId();
+                    ResponseEntity<Response<RegionDetailsDto>> response = masterFeignService.removeRegionAdmin(currJwtToken,regionId.toString());
+                }
+                break;
+            case "ROLE_EDUCATIONAL_INSTITUTE_HQ_ADMIN":
+                ResponseEntity<Response<InstituteDto>> instituteResponse = masterFeignService.getInstituteByAdminId(currJwtToken, user.getId().toString());
+                if (instituteResponse.getBody().getResult().getData() == null) {
+                    Integer instituteId = instituteResponse.getBody().getResult().getData().getId();
+                    ResponseEntity<Response<InstituteDto>> response = masterFeignService.removeInstituteAdmin(currJwtToken, instituteId.toString());
+                }
+        }
+
+        user.setIsDeleted(true);
+        user.setIsEnabled(false);
+        userRepository.save(user);
         Response<UserDto> response = new Response<>();
         response.setMessage(HttpStatusCode.SUCCESSFUL.getMessage());
         response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());
@@ -353,6 +424,12 @@ public class UserServiceImpl implements UserService {
                     HttpStatusCode.RESOURCE_NOT_FOUND.getMessage(),
                     result);
         }
+        if(this.getUserById(userId).getResult().getData().getIsDeleted()){
+            throw new CustomException(HttpStatusCode.RESOURCE_ALREADY_DELETED.getCode(),
+                    HttpStatusCode.RESOURCE_ALREADY_DELETED,
+                    "User with given ID is deleted",
+                    result);
+        }
         User user = userRepository.getReferenceById(Long.parseLong(userId));
         user.setIsEnabled(true);
         User updatedUser = userRepository.save(user);
@@ -366,6 +443,12 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(HttpStatusCode.RESOURCE_NOT_FOUND.getCode(),
                     HttpStatusCode.RESOURCE_NOT_FOUND,
                     HttpStatusCode.RESOURCE_NOT_FOUND.getMessage(),
+                    result);
+        }
+        if(this.getUserById(userId).getResult().getData().getIsDeleted()){
+            throw new CustomException(HttpStatusCode.RESOURCE_ALREADY_DELETED.getCode(),
+                    HttpStatusCode.RESOURCE_ALREADY_DELETED,
+                    "User with given ID is deleted",
                     result);
         }
         User user = userRepository.getReferenceById(Long.parseLong(userId));
@@ -412,6 +495,12 @@ public class UserServiceImpl implements UserService {
                     HttpStatusCode.BAD_REQUEST_EXCEPTION,
                     "User With Given Id Not Found",
                     new Result<>(null));
+        }
+        if(currUser.get().getIsDeleted()){
+            throw new CustomException(HttpStatusCode.RESOURCE_ALREADY_DELETED.getCode(),
+                    HttpStatusCode.RESOURCE_ALREADY_DELETED,
+                    "User with given user id is already deleted",
+                    result);
         }
         User user = currUser.get();
         String currentUserRole = permissionUtil.getCurrentUsersRoleType();
@@ -461,6 +550,12 @@ public class UserServiceImpl implements UserService {
                     HttpStatusCode.RESOURCE_NOT_FOUND.getMessage(),
                     result);
         }
+        if(currUser.get().getIsDeleted()){
+            throw new CustomException(HttpStatusCode.RESOURCE_ALREADY_DELETED.getCode(),
+                    HttpStatusCode.RESOURCE_ALREADY_DELETED,
+                    "User with given ID is deleted",
+                    result);
+        }
         User user = currUser.get();
         User userByNewUsername = userRepository.findByUsername(userCreationDto.getUsername());
         if(userByNewUsername != null && !user.getUsername().equals(userCreationDto.getUsername())){
@@ -504,6 +599,12 @@ public class UserServiceImpl implements UserService {
             response.setMessage(HttpStatusCode.USER_NOT_EXISTS.getMessage());
             response.setResult(new Result<>(isExists));
             return response;
+        }
+        if(currUser.get().getIsDeleted()){
+            throw new CustomException(HttpStatusCode.RESOURCE_ALREADY_DELETED.getCode(),
+                    HttpStatusCode.RESOURCE_ALREADY_DELETED,
+                    "User with given ID is deleted",
+                    result);
         }
         User user = currUser.get();
         if(user.getRole() == null || !user.getRole().getRoleType().equals(roleType)){

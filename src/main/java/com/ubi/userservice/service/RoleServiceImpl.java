@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -156,7 +157,7 @@ public class RoleServiceImpl implements RoleService {
                     HttpStatusCode.RESOURCE_NOT_FOUND.getMessage(),
                     result);
         }
-        Set<User> tempUsers = role.getUsers();
+        Set<User> tempUsers = role.getUsers().stream().filter(user -> !user.getIsDeleted()).collect(Collectors.toSet());
         Set<User> users = new HashSet<>();
 
         for(User user:tempUsers) {

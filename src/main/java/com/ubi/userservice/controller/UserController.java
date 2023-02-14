@@ -70,6 +70,7 @@ public class UserController {
     @GetMapping("/regionadmin/{regionAdminId}")
     public ResponseEntity<Response<UserDto>> getRegionAdminById(@PathVariable String regionAdminId) {
         Response<UserDto> response = userService.getRegionAdminById(regionAdminId);
+        System.out.println("userDto sent from user service " + response.getResult().getData().toString());
         return ResponseEntity.ok().body(response);
     }
 

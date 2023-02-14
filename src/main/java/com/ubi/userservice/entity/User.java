@@ -49,4 +49,11 @@ public class User extends Auditable {
 		this.role = role;
 		this.contactInfo = contactInfo;
 	}
+
+	@Override
+	public int hashCode() {
+		int result = super.hashCode();
+		result = 31 * result + Math.toIntExact(id);
+		return result;
+	}
 }

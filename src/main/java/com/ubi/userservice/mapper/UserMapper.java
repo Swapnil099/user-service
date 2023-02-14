@@ -43,8 +43,14 @@ public class UserMapper {
         }
         ContactInfoDto contactInfoDto = null;
         if(user.getContactInfo() != null) contactInfoDto = contactInfoMapper.toContactInfoDto(user.getContactInfo());
-
-        return new UserDto(user.getId(),user.getUsername(),user.getIsEnabled(),user.getModifiedBy(),roleType,roleDto,contactInfoDto);
+        UserDto userDto = UserDto.builder().id(user.getId()).isActivate(user.getIsEnabled())
+                .roleDto(roleDto).contactInfoDto(contactInfoDto).roleType(roleType).build();
+        userDto.setCreated(user.getCreated());
+        userDto.setCreatedBy(user.getCreatedBy());
+        userDto.setModified(user.getCreated());
+        userDto.setModifiedBy(user.getCreatedBy());
+        userDto.setIsDeleted(user.getIsDeleted());
+        return userDto;
     }
 
     public User toUser(UserCreationDto userCreationDTO) {

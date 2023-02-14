@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/ubi_kvms_master
+    url: jdbc:postgresql://localhost:5432/ubi_user_service
     username: postgres
     password: root
 

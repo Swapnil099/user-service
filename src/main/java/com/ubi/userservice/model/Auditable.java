@@ -1,5 +1,6 @@
 package com.ubi.userservice.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -7,10 +8,9 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Column;
-import javax.persistence.EntityListeners;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
@@ -23,7 +23,9 @@ public abstract class Auditable {
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
-    private LocalDateTime created;
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
+    @Temporal(TemporalType.DATE)
+    private Date created;
 
     @LastModifiedBy
     @Column(nullable = false)
@@ -31,5 +33,10 @@ public abstract class Auditable {
 
     @LastModifiedDate
     @Column(nullable = false)
-    private LocalDateTime modified;
+    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd")
+    @Temporal(TemporalType.DATE)
+    private Date modified;
+
+    @Column(nullable = false)
+    private Boolean isDeleted = false;
 }

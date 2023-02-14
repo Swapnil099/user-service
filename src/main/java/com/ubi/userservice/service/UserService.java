@@ -13,8 +13,6 @@ import java.util.List;
 
 public interface UserService {
 
-    Response<List<UserDto>> getAllUsers();
-
     Response<PaginationResponse<List<UserDto>>> getAllUsersWithPagination(String fieldName, String searchByField, Integer pageNumber, Integer pageSize) throws ParseException;
 
     Response<UserCreatedDto> createNewUser(UserCreationDto userCreationDTO);
