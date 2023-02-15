@@ -37,4 +37,11 @@ public class Permission extends Auditable {
     public Permission(String permissionType){
         this.type = permissionType;
     }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + Math.toIntExact(id);
+        return result;
+    }
 }

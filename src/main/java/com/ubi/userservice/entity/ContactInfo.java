@@ -51,4 +51,11 @@ public class ContactInfo extends Auditable {
     @JsonIgnore
     private User user;
 
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + Math.toIntExact(id);
+        return result;
+    }
+
 }

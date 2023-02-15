@@ -41,4 +41,11 @@ public class Role extends Auditable {
     	this.roleName = roleName;
 		this.roleType = roleType;
 	}
+
+	@Override
+	public int hashCode() {
+		int result = super.hashCode();
+		result = 31 * result + Math.toIntExact(id);
+		return result;
+	}
 }

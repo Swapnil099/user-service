@@ -17,7 +17,13 @@ public class RoleMapper {
         Set<Permission> permissions = role.getPermissions();
         System.out.println(role.getPermissions().toString());
         Set<String> permissionsString = permissions.stream().map(permission -> permission.getType()).collect(Collectors.toSet());
-        return new RoleDto(role.getId(),role.getRoleName(),role.getRoleType(),permissionsString);
+        RoleDto roleDto = new RoleDto(role.getId(),role.getRoleName(),role.getRoleType(),permissionsString);
+        roleDto.setCreated(role.getCreated());
+        roleDto.setCreatedBy(role.getCreatedBy());
+        roleDto.setIsDeleted(role.getIsDeleted());
+        roleDto.setModified(role.getModified());
+        roleDto.setModifiedBy(role.getModifiedBy());
+        return roleDto;
     }
 
     public Role toRole(RoleDto roleDTO){
