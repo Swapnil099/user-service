@@ -140,8 +140,8 @@ public class RoleServiceImpl implements RoleService {
             permission.getRoles().remove(role);
             permissionRepository.save(permission);
         }
+        role.setIsDeleted(true);
         roleRepository.save(role);
-        roleRepository.delete(role);
         response.setStatusCode(HttpStatusCode.SUCCESSFUL.getCode());
         response.setMessage(HttpStatusCode.SUCCESSFUL.getMessage());
         response.setResult(new Result<RoleDto>(roleMapper.toDto(role)));
